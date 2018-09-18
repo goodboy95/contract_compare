@@ -49,16 +49,16 @@ def Compare(stdList, derivList, diffWindow, minMatchChain):
         else:
             succMatch = False
             matchChain = 0
-            for i in range(0, diffWindow):
-                if swi + matchChain >= len(stdList) or i + derivPtr >= len(derivList) or stdList[swi + matchChain] == derivList[i + derivPtr]:
+            for i in range(derivPtr, diffWindow + derivPtr):
+                if swi + matchChain >= len(stdList) or i >= len(derivList) or stdList[swi + matchChain] == derivList[i]:
                     matchChain += 1
                     if matchChain >= minMatchChain:
                         #push all successful matches into resList
-                        for failWord in derivList[derivPtr:derivPtr+i-matchChain+1]:
+                        for failWord in derivList[derivPtr:i-matchChain+1]:
                             newDerivList.append(AddFailMark(failWord))
-                        for succWord in derivList[derivPtr+i-matchChain+1:derivPtr+i+1]:
+                        for succWord in derivList[i-matchChain+1:i+1]:
                             newDerivList.append(succWord)
-                        derivPtr += i + 1
+                        derivPtr = i + 1
                         succMatch = True
                         newStdList.append(stdWord)
                         skipWords = matchChain - 1
@@ -72,5 +72,5 @@ def Compare(stdList, derivList, diffWindow, minMatchChain):
     print(''.join(newDerivList))
 
 data = ReadData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
-Compare(data[0], data[1], 130, 10)
+Compare(data[0], data[1], 120, 10)
 #Compare(list('Hi, This is Jack, Nice to meet you.'), list('H, This iqqqqqqs Jack, Nice to meet you.'), 15, 3)
