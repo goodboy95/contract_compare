@@ -1,6 +1,16 @@
 #coding=utf-8
 #import jieba
-def ReadData(stdFile, derivFile):
+from PIL import Image
+import pytesseract
+import difflib
+
+def readImage(imagePath):
+    return (pytesseract.image_to_string(Image.open(imagePath), lang='chi_sim'))
+
+def readFromDoc(docPath):
+    return ''
+
+def readData(stdFile, derivFile):
     cont1 = ''
     cont2 = ''
     with open(stdFile, 'r') as fo1:
@@ -18,7 +28,7 @@ def ReadData(stdFile, derivFile):
     #print(list(derivList))
     return (list(cont1), list(cont2))
 
-def AddFailMark(failWord):
+def addFailMark(failWord):
     if failWord != '\n' and failWord != '\t' and failWord != ' ':
         #failWord = '<F>%s</F>' % failWord
         failWord = '\033[32m%s\033[0m' % failWord
@@ -28,7 +38,7 @@ def AddFailMark(failWord):
 derivList: derived Datalist, read from pdf, might have multiple mistakes.
 diffWindow: The cache size of derivedData. 
 minMatchChain: Describe how many continuously matches we should get before we accept a match.'''
-def Compare(stdList, derivList, diffWindow, minMatchChain):
+def compare(stdList, derivList, diffWindow, minMatchChain):
     derivPtr = 0
     newStdList = []
     newDerivList = []
@@ -55,7 +65,7 @@ def Compare(stdList, derivList, diffWindow, minMatchChain):
                     if matchChain >= minMatchChain:
                         #push all successful matches into resList
                         for failWord in derivList[derivPtr:i-matchChain+1]:
-                            newDerivList.append(AddFailMark(failWord))
+                            newDerivList.append(addFailMark(failWord))
                         for succWord in derivList[i-matchChain+1:i+1]:
                             newDerivList.append(succWord)
                         derivPtr = i + 1
@@ -66,11 +76,27 @@ def Compare(stdList, derivList, diffWindow, minMatchChain):
                 else:
                     matchChain = 0
             if succMatch == False:
-                newStdList.append(AddFailMark(stdWord))
+                newStdList.append(addFailMark(stdWord))
     print(''.join(newStdList))
     print('\n')
     print(''.join(newDerivList))
 
-data = ReadData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
-Compare(data[0], data[1], 120, 10)
-#Compare(list('Hi, This is Jack, Nice to meet you.'), list('H, This iqqqqqqs Jack, Nice to meet you.'), 15, 3)
+def diffLibCompare(stdList, derivList):
+    stdRes = []
+    derivRes = []
+    dif = difflib.Differ().compare(stdList, derivList)
+    for unit in dif:
+        if unit[0] == '+':
+            derivRes.append(addFailMark(unit[-1]))
+        elif (unit[0] == '-'):
+            stdRes.append(addFailMark(unit[-1]))
+        else:
+            derivRes.append(unit[-1])
+            stdRes.append(unit[-1])
+    print(''.join(stdRes))
+    print(''.join(derivRes))
+
+data = readData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
+#compare(data[0], data[1], 10, 5)
+diffLibCompare(data[0], data[1])
+#compare(list('Hi, This is Jack, Nice to meet you.'), list('H, This iqqqqqqs Jack, Nace to meet you.'), 15, 3)
