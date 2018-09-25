@@ -1,14 +1,58 @@
 #coding=utf-8
 #import jieba
 from PIL import Image
+from PyPDF2 import PdfFileReader
 import pytesseract
 import difflib
+import docx
+from aip import AipOcr
+import json
 
-def readImage(imagePath):
+aipClient = None
+#private func
+def getBaiduOcrClient():
+    APP_ID = '14284083'
+    API_KEY = 'fD5N0AvQTTA7GED4RdY7tDg2'
+    SECRET_KEY = 'CEcf9ASn9OMebosXTyQGFHh0NNtrRBm0'
+    global aipClient
+    if aipClient is None:
+        aipClient = AipOcr(APP_ID, API_KEY, SECRET_KEY)
+    return aipClient
+
+def addFailMark(failWord):
+    if failWord != '\n' and failWord != '\t' and failWord != ' ':
+        #failWord = '<F>%s</F>' % failWord
+        failWord = '\033[32m%s\033[0m' % failWord
+    return failWord
+
+#public func
+def readImageUsingBaidu(imagePath):
+    strList = []
+    client = getBaiduOcrClient()
+    img = open(imagePath, 'rb').read()
+    res = client.basicGeneral(img)
+    wordList = res['words_result']
+    for wordObj in wordList:
+        strList.append(wordObj['words'])
+    finalStr = '\n'.join(strList)
+    return finalStr
+
+def readImageUsingTesseract(imagePath):
     return (pytesseract.image_to_string(Image.open(imagePath), lang='chi_sim'))
 
 def readFromDoc(docPath):
-    return ''
+    f = docx.Document(docPath)
+    context = ''
+    for para in f.paragraphs:
+        context += para.text
+    return context
+
+def readFromPDF(pdfPath):
+    pdf = PdfFileReader(open(pdfPath, 'rb'))
+    pages = pdf.getNumPages()
+    for i in range(pages):
+        page = pdf.getPage(i)
+        page
 
 def readData(stdFile, derivFile):
     cont1 = ''
@@ -27,12 +71,6 @@ def readData(stdFile, derivFile):
     #derivList = jieba.cut(cont2, cut_all=False)
     #print(list(derivList))
     return (list(cont1), list(cont2))
-
-def addFailMark(failWord):
-    if failWord != '\n' and failWord != '\t' and failWord != ' ':
-        #failWord = '<F>%s</F>' % failWord
-        failWord = '\033[32m%s\033[0m' % failWord
-    return failWord
 
 ''' stdList: Standard Datalist, read from eDoc, assumed no mistakes.
 derivList: derived Datalist, read from pdf, might have multiple mistakes.
@@ -96,7 +134,11 @@ def diffLibCompare(stdList, derivList):
     print(''.join(stdRes))
     print(''.join(derivRes))
 
-data = readData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
+
+
+res = readImageUsingBaidu('/home/duoyi/scr.png')
+print(res)
+#data = readData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
 #compare(data[0], data[1], 10, 5)
-diffLibCompare(data[0], data[1])
+#diffLibCompare(data[0], data[1])
 #compare(list('Hi, This is Jack, Nice to meet you.'), list('H, This iqqqqqqs Jack, Nace to meet you.'), 15, 3)

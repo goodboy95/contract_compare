@@ -50,7 +50,7 @@
             // 
             this.pdfTextBox.Location = new System.Drawing.Point(540, 80);
             this.pdfTextBox.Name = "pdfTextBox";
-            this.pdfTextBox.Size = new System.Drawing.Size(339, 429);
+            this.pdfTextBox.Size = new System.Drawing.Size(331, 429);
             this.pdfTextBox.TabIndex = 1;
             this.pdfTextBox.Text = "";
             // 
@@ -60,16 +60,16 @@
             // 
             // wordPathBox
             // 
-            this.wordPathBox.Location = new System.Drawing.Point(76, 25);
+            this.wordPathBox.Location = new System.Drawing.Point(75, 25);
             this.wordPathBox.Name = "wordPathBox";
             this.wordPathBox.Size = new System.Drawing.Size(329, 25);
             this.wordPathBox.TabIndex = 2;
             // 
             // pdfPathBox
             // 
-            this.pdfPathBox.Location = new System.Drawing.Point(537, 22);
+            this.pdfPathBox.Location = new System.Drawing.Point(540, 25);
             this.pdfPathBox.Name = "pdfPathBox";
-            this.pdfPathBox.Size = new System.Drawing.Size(341, 25);
+            this.pdfPathBox.Size = new System.Drawing.Size(329, 25);
             this.pdfPathBox.TabIndex = 3;
             // 
             // wordBtn
