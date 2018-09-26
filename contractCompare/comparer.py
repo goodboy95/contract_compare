@@ -26,19 +26,26 @@ def addFailMark(failWord):
     return failWord
 
 #public func
-def readImageUsingBaidu(imagePath):
+def readImage(imagePath):
+    img = open(imagePath, 'rb').read()
+    return [img]
+
+def OCRUsingBaidu(imgList):
     strList = []
     client = getBaiduOcrClient()
-    img = open(imagePath, 'rb').read()
-    res = client.basicGeneral(img)
-    wordList = res['words_result']
-    for wordObj in wordList:
-        strList.append(wordObj['words'])
+    for img in imgList:
+        res = client.basicGeneral(img)
+        wordList = res['words_result']
+        for wordObj in wordList:
+            strList.append(wordObj['words'])
     finalStr = '\n'.join(strList)
     return finalStr
 
-def readImageUsingTesseract(imagePath):
-    return (pytesseract.image_to_string(Image.open(imagePath), lang='chi_sim'))
+def OCRUsingTesseract(imgList):
+    strList = []
+    for img in imgList:
+        strList.append(pytesseract.image_to_string(img, lang='chi_sim'))
+    return ('\n'.join(strList))
 
 def readFromDoc(docPath):
     f = docx.Document(docPath)
@@ -48,6 +55,7 @@ def readFromDoc(docPath):
     return context
 
 def readFromPDF(pdfPath):
+    imgList = []
     pdf = PdfFileReader(open(pdfPath, 'rb'))
     pages = pdf.getNumPages()
     for i in range(pages):
@@ -135,9 +143,9 @@ def diffLibCompare(stdList, derivList):
     print(''.join(derivRes))
 
 
-
-res = readImageUsingBaidu('/home/duoyi/scr.png')
-print(res)
+readFromPDF("/home/duoyi/alg.pdf")
+#res = OCRUsingBaidu('/home/duoyi/scr.png')
+#print(res)
 #data = readData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
 #compare(data[0], data[1], 10, 5)
 #diffLibCompare(data[0], data[1])
