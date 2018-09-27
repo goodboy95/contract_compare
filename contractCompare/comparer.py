@@ -1,6 +1,8 @@
 #coding=utf-8
 #import jieba
-from PIL import Image
+
+#from PIL import Image
+from wand.image import Image
 from PyPDF2 import PdfFileReader
 import pytesseract
 import difflib
@@ -55,12 +57,14 @@ def readFromDoc(docPath):
     return context
 
 def readFromPDF(pdfPath):
-    imgList = []
-    pdf = PdfFileReader(open(pdfPath, 'rb'))
-    pages = pdf.getNumPages()
-    for i in range(pages):
-        page = pdf.getPage(i)
-        page
+    img_res = []
+    img_ready = Image(filename=pdfPath, resolution=300)
+    img_conv = img_ready.convert('jpeg')
+    #img_conv.save(filename = "sps.jpeg")
+    for img in img_conv.sequence:
+        img_page = Image(img)
+        img_res.append(img_page.make_blob('jpeg'))
+    return img_res
 
 def readData(stdFile, derivFile):
     cont1 = ''
@@ -143,7 +147,7 @@ def diffLibCompare(stdList, derivList):
     print(''.join(derivRes))
 
 
-readFromPDF("/home/duoyi/alg.pdf")
+OCRUsingBaidu(readFromPDF("/home/duoyi/sports.pdf"))
 #res = OCRUsingBaidu('/home/duoyi/scr.png')
 #print(res)
 #data = readData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
