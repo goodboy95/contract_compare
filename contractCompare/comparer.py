@@ -1,7 +1,6 @@
 #coding=utf-8
-#import jieba
-
 #from PIL import Image
+import sys
 from wand.image import Image
 from PyPDF2 import PdfFileReader
 import pytesseract
@@ -39,9 +38,8 @@ def OCRUsingBaidu(imgList):
         res = client.basicGeneral(img)
         wordList = res['words_result']
         for wordObj in wordList:
-            strList.append(wordObj['words'])
-    finalStr = '\n'.join(strList)
-    return finalStr
+            strList.append(wordObj['words'] + '\n')
+    return ''.join(strList)
 
 def OCRUsingTesseract(imgList):
     strList = []
@@ -49,22 +47,27 @@ def OCRUsingTesseract(imgList):
         strList.append(pytesseract.image_to_string(img, lang='chi_sim'))
     return ('\n'.join(strList))
 
-def readFromDoc(docPath):
-    f = docx.Document(docPath)
-    context = ''
-    for para in f.paragraphs:
-        context += para.text
-    return context
-
-def readFromPDF(pdfPath):
+def getPicFromPDF(pdfPath):
     img_res = []
     img_ready = Image(filename=pdfPath, resolution=300)
     img_conv = img_ready.convert('jpeg')
+    print(len(img_conv.sequence))
     #img_conv.save(filename = "sps.jpeg")
     for img in img_conv.sequence:
         img_page = Image(img)
         img_res.append(img_page.make_blob('jpeg'))
     return img_res
+
+def readFromDoc(docPath):
+    f = docx.Document(docPath)
+    context = []
+    for para in f.paragraphs:
+        context.append(para.text)
+    return '\n'.join(context)
+
+def readFromPDF(pdfPath):
+    img_res = getPicFromPDF(pdfPath)
+    return OCRUsingBaidu(img_res)
 
 def readData(stdFile, derivFile):
     cont1 = ''
@@ -73,14 +76,10 @@ def readData(stdFile, derivFile):
         cont1 = fo1.read()
     with open(derivFile, 'r') as fo2:
         cont2 = fo2.read()
-    cont1 = cont1.replace(' ', '')
-    cont2 = cont2.replace(' ', '')
-    cont1 = cont1.replace('\t', '')
-    cont2 = cont2.replace('\t', '')
-    #cont1 = cont1.replace('\n', '')
-    #cont2 = cont2.replace('\n', '')
-    #stdList = jieba.cut(cont1, cut_all=False)
-    #derivList = jieba.cut(cont2, cut_all=False)
+    #cont1 = cont1.replace(' ', '')
+    #cont2 = cont2.replace(' ', '')
+    #cont1 = cont1.replace('\t', '')
+    #cont2 = cont2.replace('\t', '')
     #print(list(derivList))
     return (list(cont1), list(cont2))
 
@@ -138,19 +137,28 @@ def diffLibCompare(stdList, derivList):
     for unit in dif:
         if unit[0] == '+':
             derivRes.append(addFailMark(unit[-1]))
+            stdRes.append(' ')
         elif (unit[0] == '-'):
             stdRes.append(addFailMark(unit[-1]))
+            derivRes.append(' ')
         else:
             derivRes.append(unit[-1])
             stdRes.append(unit[-1])
-    print(''.join(stdRes))
-    print(''.join(derivRes))
+    return (stdRes, derivRes)
+    
+#Exposed func
+def compareDocAndPDF(docPath, pdfPath):
+    doc_txt = readFromDoc(docPath)
+    pdf_txt = readFromPDF(pdfPath)
+    ret = diffLibCompare(doc_txt, pdf_txt)
+    docDiff = ret[0]
+    pdfDiff = ret[1]
+    docDiffFile = open('doc_diff.txt', 'w')
+    pdfDiffFile = open('pdf_diff.txt', 'w')
+    docDiffFile.write(''.join(docDiff))
+    pdfDiffFile.write(''.join(pdfDiff))
+    docDiffFile.close()
+    pdfDiffFile.close()
 
-
-OCRUsingBaidu(readFromPDF("/home/duoyi/sports.pdf"))
-#res = OCRUsingBaidu('/home/duoyi/scr.png')
-#print(res)
-#data = readData('./diffTest/2-电子版对照.txt', './diffTest/2-打印出纸质版.ocr.txt')
-#compare(data[0], data[1], 10, 5)
-#diffLibCompare(data[0], data[1])
-#compare(list('Hi, This is Jack, Nice to meet you.'), list('H, This iqqqqqqs Jack, Nace to meet you.'), 15, 3)
+compareDocAndPDF(sys.argv[1], sys.argv[2])
+#readFromPDF('/mnt/d/projects/contract_compare/contractCompare/sports.pdf')
