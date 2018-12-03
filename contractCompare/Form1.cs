@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImageMagick;
 
 namespace contractCompare
 {
@@ -106,34 +107,26 @@ namespace contractCompare
 
         private void runCompare_Click(object sender, EventArgs e)
         {
-            const string DOCX_ID = "8075", PDF_ID = "3780";
-            var errorPathList = new List<string>();
-            var errorFileList = new List<string>();
             if (File.Exists("doc_diff.txt")) File.Delete("doc_diff.txt");
             if (File.Exists("pdf_diff.txt")) File.Delete("pdf_diff.txt");
             var wordPath = wordPathBox.Text;
             var pdfPath = pdfPathBox.Text;
-            if (!File.Exists(wordPath)) errorPathList.Add("Docx");
-            if (!File.Exists(pdfPath)) errorPathList.Add("PDF");
-            if (errorPathList.Count > 0)
-            {
-                MessageBox.Show($"选择的{string.Join("和", errorPathList)}文件不存在！");
-                return;
-            }
-            var fw = File.OpenRead(wordPath);
-            var fp = File.OpenRead(pdfPath);
-            var bw = new BinaryReader(fw);
-            var bp = new BinaryReader(fp);
-            var bwId = string.Join("", bw.ReadBytes(2));
-            var bpId = string.Join("", bp.ReadBytes(2));
-            if (bwId != DOCX_ID) errorFileList.Add(wordFileName);
-            if (bpId != PDF_ID) errorFileList.Add(pdfFileName);
-            if (errorFileList.Count > 0)
-            {
-                MessageBox.Show($"选择的{string.Join("和", errorFileList)}文件打开错误，文件类型不正确！");
-                return;
-            }
-            var output = CallCMD($"python3 ../../comparer.py {wordPath} {pdfPath}");
+            //if (!Services.IsDocPdfVaild(wordPath, pdfPath, out string err))
+            //{
+            //    MessageBox.Show(err);
+            //    return;
+            //}
+            //var docText = Services.GetTextFromDoc(wordPath);
+            //var pdfText = Services.GetTextFromPDF(pdfPath);
+            //var fw1 = File.OpenWrite("doc_txt.txt");
+            //var fw2 = File.OpenWrite("pdf_txt.txt");
+            //var sw1 = new StreamWriter(fw1);
+            //var sw2 = new StreamWriter(fw2);
+            //sw1.Write(docText);
+            //sw2.Write(pdfText);
+            //disposeObjects(sw1, sw2, fw1, fw2);
+            Services.AnalyseDiffByPython();
+
             var f1 = File.OpenRead("doc_diff.txt");
             var f2 = File.OpenRead("pdf_diff.txt");
             var sr1 = new StreamReader(f1);
