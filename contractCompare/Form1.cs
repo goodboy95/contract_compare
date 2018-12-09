@@ -81,7 +81,7 @@ namespace contractCompare
             foreach (var varyPtr in variedList)
             {
                 textBox.Select(varyPtr, 1);
-                textBox.SelectionColor = Color.Green;
+                textBox.SelectionColor = Color.Red;
             }
         }
 
@@ -105,26 +105,44 @@ namespace contractCompare
             }
         }
 
-        private void runCompare_Click(object sender, EventArgs e)
+        private void wordTextBox_VScroll(object sender, EventArgs e)
         {
+            var pct1 = wordTextBox.sc
+            MessageBox.Show("hw");
+        }
+
+        private void pdfTextBox_VScroll(object sender, EventArgs e)
+        {
+            MessageBox.Show("hw2");
+        }
+
+        private void runCompare_Click(object sender, EventArgs e)
+        {        
+            loadProgress.Value = 0;
+            Services.InitProgressBar(loadProgress);
             if (File.Exists("doc_diff.txt")) File.Delete("doc_diff.txt");
             if (File.Exists("pdf_diff.txt")) File.Delete("pdf_diff.txt");
             var wordPath = wordPathBox.Text;
             var pdfPath = pdfPathBox.Text;
-            //if (!Services.IsDocPdfVaild(wordPath, pdfPath, out string err))
-            //{
-            //    MessageBox.Show(err);
-            //    return;
-            //}
-            //var docText = Services.GetTextFromDoc(wordPath);
-            //var pdfText = Services.GetTextFromPDF(pdfPath);
-            //var fw1 = File.OpenWrite("doc_txt.txt");
-            //var fw2 = File.OpenWrite("pdf_txt.txt");
-            //var sw1 = new StreamWriter(fw1);
-            //var sw2 = new StreamWriter(fw2);
-            //sw1.Write(docText);
-            //sw2.Write(pdfText);
-            //disposeObjects(sw1, sw2, fw1, fw2);
+            if (!Services.IsDocPdfVaild(wordPath, pdfPath, out string err))
+            {
+                MessageBox.Show(err);
+                return;
+            }
+            var docText = Services.GetTextFromDoc(wordPath);
+            var pdfText = Services.GetTextFromPDF(pdfPath);
+            if (pdfText == null)
+            {
+                loadProgress.Value = 0;
+                return;
+            }
+            var fw1 = File.OpenWrite("doc_txt.txt");
+            var fw2 = File.OpenWrite("pdf_txt.txt");
+            var sw1 = new StreamWriter(fw1);
+            var sw2 = new StreamWriter(fw2);
+            sw1.Write(docText);
+            sw2.Write(pdfText);
+            disposeObjects(sw1, sw2, fw1, fw2);
             Services.AnalyseDiffByPython();
 
             var f1 = File.OpenRead("doc_diff.txt");
@@ -136,6 +154,7 @@ namespace contractCompare
             disposeObjects(sr1, sr2, f1, f2);
             textBoxProcess(wordTextBox, docDiff);
             textBoxProcess(pdfTextBox, pdfDiff);
+            loadProgress.Value = loadProgress.Maximum;
         }
     }
 }

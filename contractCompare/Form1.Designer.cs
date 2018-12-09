@@ -40,6 +40,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.loadProgress = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // wordTextBox
@@ -50,6 +51,7 @@
             this.wordTextBox.Size = new System.Drawing.Size(675, 700);
             this.wordTextBox.TabIndex = 0;
             this.wordTextBox.Text = "";
+            this.wordTextBox.VScroll += new System.EventHandler(this.wordTextBox_VScroll);
             // 
             // pdfTextBox
             // 
@@ -59,6 +61,7 @@
             this.pdfTextBox.Size = new System.Drawing.Size(675, 700);
             this.pdfTextBox.TabIndex = 1;
             this.pdfTextBox.Text = "";
+            this.pdfTextBox.VScroll += new System.EventHandler(this.pdfTextBox_VScroll);
             // 
             // openFileDialog1
             // 
@@ -147,12 +150,20 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "PDF文件内容：";
             // 
+            // loadProgress
+            // 
+            this.loadProgress.Location = new System.Drawing.Point(12, 878);
+            this.loadProgress.Name = "loadProgress";
+            this.loadProgress.Size = new System.Drawing.Size(1433, 28);
+            this.loadProgress.TabIndex = 11;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1469, 1055);
+            this.ClientSize = new System.Drawing.Size(1469, 1020);
+            this.Controls.Add(this.loadProgress);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -186,6 +197,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ProgressBar loadProgress;
     }
 }
 

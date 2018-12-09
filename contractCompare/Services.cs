@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Xceed.Words.NET;
 
 namespace contractCompare
@@ -17,10 +18,15 @@ namespace contractCompare
     public static class Services
     {
         static Ocr client = null;
-
+        static ProgressBar _bar = null;
         static Services()
         {
-            MagickNET.SetGhostscriptDirectory(@"D:\projects\contract_compare\ghostscript");
+            MagickNET.SetGhostscriptDirectory(@"E:\contract_compare\ghostscript");
+        }
+
+        public static void InitProgressBar(ProgressBar bar)
+        {
+            _bar = bar;
         }
 
         public static Ocr GetBaiduOCRClient()
@@ -65,7 +71,7 @@ namespace contractCompare
         public static string GetTextFromDoc(string docPath)
         {
             var doc = DocX.Load(docPath);
-            var txt = doc.Text;
+            var txt = string.Join("\n", doc.Paragraphs.Select(p => p.Text));
             doc.Dispose();
             return txt;
         }
@@ -75,7 +81,10 @@ namespace contractCompare
             var textBuilder = new StringBuilder();
             var pdf = PdfReader.Open(pdfPath, PdfDocumentOpenMode.Import);
             int startPage = 0, endPage = pdf.PageCount;
-            while (startPage <= endPage)
+            //处理pdf前，处理pdf后各占一位，5页pdf转图片占一位，pdf每页做OCR占一位
+            _bar.Maximum = endPage + ((endPage - 1) / 5 + 1) + 2; 
+            _bar.Value = 1;
+            while (startPage < endPage)
             {
                 var partialPdf = new PdfDocument();
                 partialPdf.Version = pdf.Version;
@@ -84,7 +93,9 @@ namespace contractCompare
                     partialPdf.AddPage(pdf.Pages[i]);
                 }
                 partialPdf.Save("temp.pdf");
-                textBuilder.Append(GetPartialTextFromPDF("temp.pdf"));
+                var partialText = GetPartialTextFromPDF("temp.pdf");
+                if (partialText == null) { return null; }
+                textBuilder.Append(partialText);
                 startPage += 5;
                 File.Delete("temp.pdf");
             }
@@ -101,25 +112,40 @@ namespace contractCompare
 
         private static string GetPartialTextFromPDF(string pdfPath)
         {
+            var client = GetBaiduOCRClient();
             var textList = new List<string>();
             var settings = new MagickReadSettings()
             {
-                Density = new Density(300)
+                Density = new Density(450)
             };
             using (var imgs = new MagickImageCollection())
             {
                 imgs.Read(pdfPath, settings);
+                _bar.Value++;
                 foreach (var g in imgs)
                 {
                     var gb = g.ToByteArray(MagickFormat.Jpeg);
-                    var client = GetBaiduOCRClient();
-                    var result = client.GeneralBasic(gb);
+                    var f = File.OpenWrite(@"E:\xx.jpg");
+                    f.Write(gb, 0, gb.Length);
+                    f.Close();
+            picOCR:
                     try
                     {
+                        var result = client.GeneralBasic(gb);
                         textList.AddRange(((JArray)result["words_result"]).Select(o => o["words"].Value<string>()));
+                        _bar.Value++;
                     }
                     //duwei TODO: 
-                    catch (Exception e) { continue; }
+                    catch (Exception e)
+                    {
+                        var errAction = MessageBox.Show($"进行PDF解析时出现错误：{e.Message}", "PDF解析错误", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                        if (errAction == DialogResult.Retry)
+                        {
+                            goto picOCR;
+                        }
+                        else { return null; }
+
+                    }
                 }
             }
             return string.Join("\n", textList);

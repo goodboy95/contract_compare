@@ -1,7 +1,0 @@
-wand
-pypdf2
-pytesseract
-python-docx
-baidu-aip(需要baiduOCR时装入)
-
-实装软件时需配置 /etc/ImageMagick/policy.xml，删掉对pdf的限制
