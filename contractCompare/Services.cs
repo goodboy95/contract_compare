@@ -76,13 +76,13 @@ namespace contractCompare
             return txt;
         }
 
-        public static string GetTextFromPDF(string pdfPath)
+        public static string GetTextFromPDF(string pdfPath, bool isAccurate)
         {
             var textBuilder = new StringBuilder();
             var pdf = PdfReader.Open(pdfPath, PdfDocumentOpenMode.Import);
             int startPage = 0, endPage = pdf.PageCount;
-            //处理pdf前，处理pdf后各占一位，5页pdf转图片占一位，pdf每页做OCR占一位
-            _bar.Maximum = endPage + ((endPage - 1) / 5 + 1) + 2; 
+            //处理pdf前占一位，处理pdf后占两位(差异分析一位，显示一位)，5页pdf转图片占一位，pdf每页做OCR占一位
+            _bar.Maximum = endPage + ((endPage - 1) / 5 + 1) + 3; 
             _bar.Value = 1;
             while (startPage < endPage)
             {
@@ -93,7 +93,7 @@ namespace contractCompare
                     partialPdf.AddPage(pdf.Pages[i]);
                 }
                 partialPdf.Save("temp.pdf");
-                var partialText = GetPartialTextFromPDF("temp.pdf");
+                var partialText = GetPartialTextFromPDF("temp.pdf", isAccurate);
                 if (partialText == null) { return null; }
                 textBuilder.Append(partialText);
                 startPage += 5;
@@ -110,7 +110,7 @@ namespace contractCompare
             ssc.Execute(ssb);
         }
 
-        private static string GetPartialTextFromPDF(string pdfPath)
+        private static string GetPartialTextFromPDF(string pdfPath, bool isAccurate)
         {
             var client = GetBaiduOCRClient();
             var textList = new List<string>();
@@ -131,11 +131,10 @@ namespace contractCompare
             picOCR:
                     try
                     {
-                        var result = client.GeneralBasic(gb);
+                        var result = isAccurate ? client.AccurateBasic(gb) : client.GeneralBasic(gb);
                         textList.AddRange(((JArray)result["words_result"]).Select(o => o["words"].Value<string>()));
                         _bar.Value++;
                     }
-                    //duwei TODO: 
                     catch (Exception e)
                     {
                         var errAction = MessageBox.Show($"进行PDF解析时出现错误：{e.Message}", "PDF解析错误", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
