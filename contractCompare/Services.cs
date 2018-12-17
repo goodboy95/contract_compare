@@ -21,7 +21,7 @@ namespace contractCompare
         static ProgressBar _bar = null;
         static Services()
         {
-            MagickNET.SetGhostscriptDirectory(@"E:\contract_compare\ghostscript");
+            MagickNET.SetGhostscriptDirectory(@"ghostscript");
         }
 
         public static void InitProgressBar(ProgressBar bar)
@@ -29,11 +29,11 @@ namespace contractCompare
             _bar = bar;
         }
 
-        public static Ocr GetBaiduOCRClient()
+        public static Ocr GetBaiduOCRClient(bool isCreate = false, string apiKey = null, string secretKey = null)
         {
-            if (client == null)
+            if (isCreate)
             {
-                client = new Ocr("fD5N0AvQTTA7GED4RdY7tDg2", "CEcf9ASn9OMebosXTyQGFHh0NNtrRBm0");
+                client = new Ocr(apiKey, secretKey);
                 client.Timeout = 60000;
             }
             return client;
@@ -125,9 +125,6 @@ namespace contractCompare
                 foreach (var g in imgs)
                 {
                     var gb = g.ToByteArray(MagickFormat.Jpeg);
-                    var f = File.OpenWrite(@"E:\xx.jpg");
-                    f.Write(gb, 0, gb.Length);
-                    f.Close();
             picOCR:
                     try
                     {

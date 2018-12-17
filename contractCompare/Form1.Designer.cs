@@ -49,13 +49,14 @@
             this.cautiousLevel = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.disableReread = new System.Windows.Forms.CheckBox();
+            this.updateAccount = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // wordTextBox
             // 
             this.wordTextBox.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.wordTextBox.Location = new System.Drawing.Point(9, 158);
-            this.wordTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.wordTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.wordTextBox.Name = "wordTextBox";
             this.wordTextBox.Size = new System.Drawing.Size(527, 533);
             this.wordTextBox.TabIndex = 0;
@@ -66,7 +67,7 @@
             // 
             this.pdfTextBox.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.pdfTextBox.Location = new System.Drawing.Point(558, 158);
-            this.pdfTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pdfTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.pdfTextBox.Name = "pdfTextBox";
             this.pdfTextBox.Size = new System.Drawing.Size(527, 533);
             this.pdfTextBox.TabIndex = 1;
@@ -80,7 +81,7 @@
             // wordPathBox
             // 
             this.wordPathBox.Location = new System.Drawing.Point(121, 14);
-            this.wordPathBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.wordPathBox.Margin = new System.Windows.Forms.Padding(2);
             this.wordPathBox.Name = "wordPathBox";
             this.wordPathBox.ReadOnly = true;
             this.wordPathBox.Size = new System.Drawing.Size(310, 21);
@@ -89,7 +90,7 @@
             // pdfPathBox
             // 
             this.pdfPathBox.Location = new System.Drawing.Point(662, 13);
-            this.pdfPathBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pdfPathBox.Margin = new System.Windows.Forms.Padding(2);
             this.pdfPathBox.Name = "pdfPathBox";
             this.pdfPathBox.ReadOnly = true;
             this.pdfPathBox.Size = new System.Drawing.Size(322, 21);
@@ -98,7 +99,7 @@
             // wordBtn
             // 
             this.wordBtn.Location = new System.Drawing.Point(453, 14);
-            this.wordBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.wordBtn.Margin = new System.Windows.Forms.Padding(2);
             this.wordBtn.Name = "wordBtn";
             this.wordBtn.Size = new System.Drawing.Size(63, 22);
             this.wordBtn.TabIndex = 4;
@@ -109,7 +110,7 @@
             // pdfBtn
             // 
             this.pdfBtn.Location = new System.Drawing.Point(1003, 14);
-            this.pdfBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pdfBtn.Margin = new System.Windows.Forms.Padding(2);
             this.pdfBtn.Name = "pdfBtn";
             this.pdfBtn.Size = new System.Drawing.Size(63, 22);
             this.pdfBtn.TabIndex = 5;
@@ -121,7 +122,7 @@
             // 
             this.runCompare.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.runCompare.Location = new System.Drawing.Point(508, 101);
-            this.runCompare.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.runCompare.Margin = new System.Windows.Forms.Padding(2);
             this.runCompare.Name = "runCompare";
             this.runCompare.Size = new System.Drawing.Size(93, 43);
             this.runCompare.TabIndex = 6;
@@ -172,7 +173,7 @@
             // loadProgress
             // 
             this.loadProgress.Location = new System.Drawing.Point(9, 702);
-            this.loadProgress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.loadProgress.Margin = new System.Windows.Forms.Padding(2);
             this.loadProgress.Name = "loadProgress";
             this.loadProgress.Size = new System.Drawing.Size(1075, 22);
             this.loadProgress.TabIndex = 11;
@@ -180,7 +181,7 @@
             // isAccurateOCR
             // 
             this.isAccurateOCR.AutoSize = true;
-            this.isAccurateOCR.Location = new System.Drawing.Point(227, 64);
+            this.isAccurateOCR.Location = new System.Drawing.Point(186, 62);
             this.isAccurateOCR.Name = "isAccurateOCR";
             this.isAccurateOCR.Size = new System.Drawing.Size(102, 16);
             this.isAccurateOCR.TabIndex = 12;
@@ -190,7 +191,7 @@
             // useSecondDiffAlg
             // 
             this.useSecondDiffAlg.AutoSize = true;
-            this.useSecondDiffAlg.Location = new System.Drawing.Point(373, 64);
+            this.useSecondDiffAlg.Location = new System.Drawing.Point(332, 62);
             this.useSecondDiffAlg.Name = "useSecondDiffAlg";
             this.useSecondDiffAlg.Size = new System.Drawing.Size(144, 16);
             this.useSecondDiffAlg.TabIndex = 13;
@@ -201,7 +202,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(538, 65);
+            this.label5.Location = new System.Drawing.Point(497, 63);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(89, 12);
             this.label5.TabIndex = 14;
@@ -209,7 +210,8 @@
             // 
             // findRange
             // 
-            this.findRange.Location = new System.Drawing.Point(633, 62);
+            this.findRange.Enabled = false;
+            this.findRange.Location = new System.Drawing.Point(592, 60);
             this.findRange.Name = "findRange";
             this.findRange.Size = new System.Drawing.Size(63, 21);
             this.findRange.TabIndex = 15;
@@ -219,7 +221,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(733, 65);
+            this.label6.Location = new System.Drawing.Point(692, 63);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 12);
             this.label6.TabIndex = 16;
@@ -227,7 +229,8 @@
             // 
             // cautiousLevel
             // 
-            this.cautiousLevel.Location = new System.Drawing.Point(811, 62);
+            this.cautiousLevel.Enabled = false;
+            this.cautiousLevel.Location = new System.Drawing.Point(767, 60);
             this.cautiousLevel.Name = "cautiousLevel";
             this.cautiousLevel.Size = new System.Drawing.Size(63, 21);
             this.cautiousLevel.TabIndex = 17;
@@ -236,7 +239,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(920, 60);
+            this.button1.Location = new System.Drawing.Point(879, 58);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 18;
@@ -247,19 +250,30 @@
             // disableReread
             // 
             this.disableReread.AutoSize = true;
-            this.disableReread.Location = new System.Drawing.Point(71, 64);
+            this.disableReread.Location = new System.Drawing.Point(30, 62);
             this.disableReread.Name = "disableReread";
             this.disableReread.Size = new System.Drawing.Size(108, 16);
             this.disableReread.TabIndex = 19;
             this.disableReread.Text = "不重新加载文件";
             this.disableReread.UseVisualStyleBackColor = true;
             // 
+            // updateAccount
+            // 
+            this.updateAccount.Location = new System.Drawing.Point(991, 58);
+            this.updateAccount.Name = "updateAccount";
+            this.updateAccount.Size = new System.Drawing.Size(75, 23);
+            this.updateAccount.TabIndex = 20;
+            this.updateAccount.Text = "更新账号";
+            this.updateAccount.UseVisualStyleBackColor = true;
+            this.updateAccount.Click += new System.EventHandler(this.updateAccount_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1102, 816);
+            this.ClientSize = new System.Drawing.Size(1102, 736);
+            this.Controls.Add(this.updateAccount);
             this.Controls.Add(this.disableReread);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.cautiousLevel);
@@ -280,10 +294,11 @@
             this.Controls.Add(this.wordPathBox);
             this.Controls.Add(this.pdfTextBox);
             this.Controls.Add(this.wordTextBox);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,6 +327,7 @@
         private System.Windows.Forms.TextBox cautiousLevel;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox disableReread;
+        private System.Windows.Forms.Button updateAccount;
     }
 }
 

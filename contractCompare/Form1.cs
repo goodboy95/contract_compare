@@ -161,6 +161,18 @@ namespace contractCompare
             else { cautiousVal = cautiousLevel.Text; }
         }
 
+        private void updateAccount_Click(object sender, EventArgs e)
+        {
+            var ocrDialog = new UpdateKey();
+            var res = ocrDialog.ShowDialog();
+            ocrDialog.Dispose();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private void findRange_TextChanged(object sender, EventArgs e)
         {
             int.TryParse(findRange.Text, out int val);
@@ -170,6 +182,30 @@ namespace contractCompare
 
         private void runCompare_Click(object sender, EventArgs e)
         {
+            var apiKey = "";
+            var secretKey = "";
+            if (!File.Exists("ocrkey.ini"))
+            {
+                var ocrDialog = new UpdateKey();
+                var res = ocrDialog.ShowDialog();
+                if (res != DialogResult.OK) { return; }
+                else
+                {
+                    apiKey = ocrDialog.ApiKey;
+                    secretKey = ocrDialog.SecretKey;
+                }
+                ocrDialog.Dispose();
+            }
+            else
+            {
+                var ocrFile = File.OpenRead("ocrkey.ini");
+                var ocrkeyReader = new StreamReader(ocrFile);
+                apiKey = ocrkeyReader.ReadLine();
+                secretKey = ocrkeyReader.ReadLine();
+                ocrkeyReader.Close();
+                ocrFile.Close();
+            }
+            Services.GetBaiduOCRClient(true, apiKey, secretKey);
             // save config for python submodule
             if (File.Exists("diff_config.ini")) { File.Delete("diff_config.ini"); }
             var cf = File.OpenWrite("diff_config.ini");
